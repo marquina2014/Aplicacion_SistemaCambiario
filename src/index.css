@@ -1,0 +1,38 @@
+@import './styles/neumorphism.css';
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--neu-bg);
+}
+
+.max-width-xl {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.max-width-lg {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.spin-animation {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Espacio inferior en dispositivos móviles para no chocar con la barra de navegación flotante */
+@media (max-width: 767.98px) {
+  body {
+    padding-bottom: 90px;
+  }
+}
