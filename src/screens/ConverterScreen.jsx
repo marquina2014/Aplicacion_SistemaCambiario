@@ -53,6 +53,20 @@ export function ConverterScreen({
     setToCurrency(temp);
   };
 
+  const handleFromChange = (newFrom) => {
+    if (newFrom === toCurrency) {
+      setToCurrency(fromCurrency);
+    }
+    setFromCurrency(newFrom);
+  };
+
+  const handleToChange = (newTo) => {
+    if (newTo === fromCurrency) {
+      setFromCurrency(toCurrency);
+    }
+    setToCurrency(newTo);
+  };
+
   const handleSelectPair = (pair) => {
     setFromCurrency(pair.from);
     setToCurrency(pair.to);
@@ -123,7 +137,8 @@ export function ConverterScreen({
                 <CurrencySelector
                   label="De (Origen)"
                   value={fromCurrency}
-                  onChange={setFromCurrency}
+                  excludeCurrency={toCurrency}
+                  onChange={handleFromChange}
                 />
               </div>
 
@@ -144,7 +159,8 @@ export function ConverterScreen({
                 <CurrencySelector
                   label="A (Destino)"
                   value={toCurrency}
-                  onChange={setToCurrency}
+                  excludeCurrency={fromCurrency}
+                  onChange={handleToChange}
                 />
               </div>
             </div>

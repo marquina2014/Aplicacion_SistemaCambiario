@@ -9,18 +9,28 @@ export const CURRENCY_OPTIONS = [
 ];
 
 /**
- * Selector neumórfico de divisas con soporte para BCV, Euro, USDT y Paralelo
+ * Selector neumórfico de divisas con soporte para BCV, Euro, USDT y Paralelo.
+ * Permite excluir una divisa específica para evitar convertir la misma (ej: USDT a USDT).
  */
 export function CurrencySelector({
   value = 'USD_BCV',
   onChange,
   label,
+  excludeCurrency,
   disabled = false,
   className = '',
 }) {
   // Normalizar valor si viene como 'USD' o 'EUR'
   const normalizedValue =
     value === 'USD' ? 'USD_BCV' : value === 'EUR' ? 'EUR_BCV' : value;
+
+  const normalizedExclude =
+    excludeCurrency === 'USD' ? 'USD_BCV' : excludeCurrency === 'EUR' ? 'EUR_BCV' : excludeCurrency;
+
+  // Filtrar opciones para no mostrar la moneda excluida
+  const availableOptions = CURRENCY_OPTIONS.filter(
+    (c) => c.code !== normalizedExclude
+  );
 
   return (
     <div className={`mb-3 ${className}`}>
@@ -37,7 +47,7 @@ export function CurrencySelector({
           className="neu-input neu-select fw-semibold"
           style={{ cursor: 'pointer' }}
         >
-          {CURRENCY_OPTIONS.map((c) => (
+          {availableOptions.map((c) => (
             <option key={c.code} value={c.code}>
               {c.symbol} • {c.name}
             </option>
