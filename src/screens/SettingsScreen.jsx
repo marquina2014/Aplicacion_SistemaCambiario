@@ -3,11 +3,13 @@ import NeumorphicCard from '../components/common/NeumorphicCard';
 import NeumorphicSwitch from '../components/common/NeumorphicSwitch';
 import NeumorphicButton from '../components/common/NeumorphicButton';
 import { isSupabaseConfigured } from '../functions/services/supabaseClient';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * Pantalla de Ajustes, Configuración de Tema y Supabase
  */
-export function SettingsScreen({ theme = 'light', onToggleTheme }) {
+export function SettingsScreen({ theme = 'light', onToggleTheme, onNavigateToAuth }) {
+  const { user, logout } = useAuth();
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [copiedSql, setCopiedSql] = useState(false);
 
@@ -96,6 +98,86 @@ CREATE POLICY "Permitir lectura publica" ON exchange_rates FOR SELECT USING (tru
             <div className="d-flex align-items-center gap-2 text-success small fw-semibold">
               <i className="bi bi-check-circle-fill"></i>
               <span>Diseño Neumórfico Responsivo (PC y Celular)</span>
+            </div>
+          </NeumorphicCard>
+        </div>
+
+        {/* Tarjeta de Cuenta de Usuario y Autenticación */}
+        <div className="col-12">
+          <NeumorphicCard className="p-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex align-items-center gap-3">
+                <div
+                  className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                  style={{
+                    width: '46px',
+                    height: '46px',
+                    background: user ? 'var(--neu-primary-gradient)' : 'rgba(124, 139, 161, 0.2)',
+                    color: user ? '#ffffff' : 'var(--neu-text-muted)',
+                    fontSize: '1.2rem',
+                    boxShadow: user ? 'var(--neu-primary-shadow)' : 'none',
+                  }}
+                >
+                  {user ? (
+                    (user.user_metadata?.full_name || user.email || 'U').charAt(0).toUpperCase()
+                  ) : (
+                    <i className="bi bi-person text-secondary"></i>
+                  )}
+                </div>
+                <div>
+                  <h6 className="mb-0 fw-bold text-dark">
+                    {user
+                      ? (user.user_metadata?.full_name || user.email)
+                      : 'Modo Invitado (Sin Cuenta)'}
+                  </h6>
+                  <span className="small text-secondary">
+                    {user
+                      ? `${user.email} • ${user.isLocal ? 'Almacenamiento Local' : 'Supabase Cloud'}`
+                      : 'Inicia sesión o regístrate para sincronizar tu cuenta y favoritos'}
+                  </span>
+                </div>
+              </div>
+
+              <span
+                className={`badge rounded-pill ${
+                  user ? 'bg-success' : 'bg-secondary'
+                } px-3 py-2 fw-bold`}
+              >
+                {user ? 'SESIÓN ACTIVA' : 'INVITADO'}
+              </span>
+            </div>
+
+            <div className="pt-3 border-top border-light-subtle d-flex flex-wrap gap-2 justify-content-end">
+              {user ? (
+                <NeumorphicButton
+                  variant="default"
+                  icon="bi-box-arrow-right text-danger"
+                  onClick={logout}
+                  className="py-2 px-3 small"
+                >
+                  Cerrar Sesión
+                </NeumorphicButton>
+              ) : (
+                <>
+                  <NeumorphicButton
+                    variant="default"
+                    icon="bi-box-arrow-in-right text-primary"
+                    onClick={() => onNavigateToAuth && onNavigateToAuth('login')}
+                    className="py-2 px-3 small"
+                  >
+                    Iniciar Sesión
+                  </NeumorphicButton>
+
+                  <NeumorphicButton
+                    variant="primary"
+                    icon="bi-person-plus-fill"
+                    onClick={() => onNavigateToAuth && onNavigateToAuth('register')}
+                    className="py-2 px-3 small text-white"
+                  >
+                    Crear Cuenta
+                  </NeumorphicButton>
+                </>
+              )}
             </div>
           </NeumorphicCard>
         </div>

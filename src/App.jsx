@@ -5,10 +5,13 @@ import DashboardScreen from './screens/DashboardScreen';
 import ConverterScreen from './screens/ConverterScreen';
 import HistoricalScreen from './screens/HistoricalScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import AuthScreen from './screens/AuthScreen';
+import { AuthProvider } from './context/AuthContext';
 import { fetchCurrentRates } from './functions/services/ratesService';
 
-export function App() {
+export function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [authMode, setAuthMode] = useState('login');
   const [rates, setRates] = useState(null);
   const [loading, setLoading] = useState(true);
   const [initialConverterCurrency, setInitialConverterCurrency] = useState('EUR_BCV');
@@ -52,12 +55,22 @@ export function App() {
     setActiveTab('converter');
   };
 
+  const handleNavigateToAuth = (mode = 'login') => {
+    setAuthMode(mode);
+    setActiveTab('auth');
+  };
+
   return (
     <div className="d-flex flex-column min-vh-100">
       {/* Barra de navegación superior (PC / Tablet) */}
       <Navbar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tab) => {
+          if (tab === 'auth') {
+            setAuthMode('login');
+          }
+          setActiveTab(tab);
+        }}
         onRefresh={loadRates}
         loading={loading}
         theme={theme}
@@ -92,6 +105,15 @@ export function App() {
           <SettingsScreen
             theme={theme}
             onToggleTheme={toggleTheme}
+            onNavigateToAuth={handleNavigateToAuth}
+          />
+        )}
+
+        {activeTab === 'auth' && (
+          <AuthScreen
+            initialMode={authMode}
+            onSuccess={() => setActiveTab('dashboard')}
+            onNavigateHome={() => setActiveTab('dashboard')}
           />
         )}
       </main>
@@ -102,6 +124,14 @@ export function App() {
         onTabChange={setActiveTab}
       />
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

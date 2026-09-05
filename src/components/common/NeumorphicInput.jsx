@@ -16,6 +16,7 @@ export function NeumorphicInput({
   wrapperClassName = '',
   error,
   disabled = false,
+  onIconRightClick,
   ...rest
 }) {
   return (
@@ -57,8 +58,11 @@ export function NeumorphicInput({
         />
         {iconRight && (
           <span
-            className="position-absolute end-0 pe-3 text-secondary user-select-none"
-            style={{ zIndex: 2 }}
+            className={`position-absolute end-0 pe-3 text-secondary ${onIconRightClick ? 'cursor-pointer' : 'user-select-none'}`}
+            style={{ zIndex: 2, cursor: onIconRightClick ? 'pointer' : 'default' }}
+            onClick={onIconRightClick}
+            role={onIconRightClick ? 'button' : undefined}
+            tabIndex={onIconRightClick ? 0 : undefined}
           >
             <i className={`bi ${iconRight}`}></i>
           </span>
